@@ -20,10 +20,12 @@ const photos = photosData.map((p) => {
 
     <div class="photo-grid">
         {photos.map((p) => (
-            <figure class="photo-item">
-                <Image src={p.img} alt={p.title} widths={[480, 800, 1200]} sizes="(max-width: 640px) 100vw, 340px" loading="lazy" />
-                <figcaption>{p.title}</figcaption>
-            </figure>
+            <a class="photo-link" href={`/photos/${p.file}/`}>
+                <figure class="photo-item">
+                    <Image src={p.img} alt={p.title} widths={[480, 800, 1200]} sizes="(max-width: 640px) 100vw, 340px" loading="lazy" />
+                    <figcaption>{p.title}</figcaption>
+                </figure>
+            </a>
         ))}
     </div>
 </Base>
@@ -46,9 +48,28 @@ const photos = photosData.map((p) => {
         }
     }
 
-    .photo-item {
-        margin: 0 0 1rem;
+    .photo-link {
+        display: block;
+        margin-bottom: 1rem;
         break-inside: avoid;
+        color: inherit;
+    }
+
+    .photo-link:hover {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .photo-link:hover figcaption {
+        color: var(--accent-gold);
+    }
+
+    .photo-link:hover img {
+        border-color: var(--border-hover);
+    }
+
+    .photo-item {
+        margin: 0;
     }
 
     .photo-item img {

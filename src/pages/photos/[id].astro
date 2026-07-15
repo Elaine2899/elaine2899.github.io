@@ -1,0 +1,117 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import photosData from '../../data/photos.json';
+
+export async function getStaticPaths() {
+    return photosData.map((p, i) => ({
+        params: { id: p.file },
+        props: {
+            photo: p,
+            prev: photosData[i - 1] ?? null,
+            next: photosData[i + 1] ?? null,
+        },
+    }));
+}
+
+const { photo, prev, next } = Astro.props;
+
+// story 可以是字串或字串陣列（多段心得）
+const storyParas: string[] = Array.isArray(photo.story)
+    ? photo.story
+    : photo.story
+      ? [photo.story]
+      : [];
+
+const images = import.meta.glob<{ default: ImageMetadata }>('../../assets/photos/*.webp', {
+    eager: true,
+});
+const mod = images[`../../assets/photos/${photo.file}.webp`];
+if (!mod) throw new Error(`photos.json 指到不存在的圖檔：${photo.file}`);
+const img = mod.default;
+---
+
+<Base title={`${photo.title}｜攝影｜曾芸儀`} description={photo.desc}>
+    <article class="photo-page">
+        <Image
+            class="photo-full"
+            src={img}
+            alt={photo.title}
+            widths={[640, 1080, 1600]}
+            sizes="(max-width: 740px) 100vw, 704px"
+            loading="eager"
+        />
+
+        <header>
+            <h1>{photo.title}</h1>
+            <p class="photo-meta">
+                {photo.location && <span>{photo.location}</span>}
+                {photo.date && <time>{photo.date}</time>}
+            </p>
+        </header>
+
+        {photo.desc && <p class="photo-desc">{photo.desc}</p>}
+        {storyParas.map((para) => <p class="photo-story">{para}</p>)}
+
+        <nav class="photo-nav" aria-label="前後照片">
+            <span>{prev && <a href={`/photos/${prev.file}/`}>← {prev.title}</a>}</span>
+            <a href="/photos/">回攝影</a>
+            <span>{next && <a href={`/photos/${next.file}/`}>{next.title} →</a>}</span>
+        </nav>
+    </article>
+</Base>
+
+<style>
+    .photo-page {
+        padding-top: 3rem;
+    }
+
+    .photo-page :global(.photo-full) {
+        width: 100%;
+        max-height: 80vh;
+        object-fit: contain;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        background: var(--bg-card);
+    }
+
+    .photo-page h1 {
+        margin: 1.75rem 0 0;
+        font-size: 1.3rem;
+    }
+
+    .photo-meta {
+        margin: 0.4rem 0 0;
+        display: flex;
+        gap: 1rem;
+        color: var(--text-muted);
+        font-size: 0.85rem;
+    }
+
+    .photo-desc {
+        margin: 1.5rem 0 0;
+        color: var(--text-primary);
+    }
+
+    .photo-story {
+        margin: 1rem 0 0;
+        color: var(--text-secondary);
+    }
+
+    .photo-nav {
+        margin-top: 3.5rem;
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        font-size: 0.9rem;
+        border-top: 1px solid var(--border-color);
+        padding-top: 1.25rem;
+    }
+
+    .photo-nav span {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+</style>
