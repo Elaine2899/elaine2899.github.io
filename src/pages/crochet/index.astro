@@ -1,0 +1,82 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import crochetData from '../../data/crochet.json';
+
+const images = import.meta.glob<{ default: ImageMetadata }>('../../assets/crochet/*.webp', {
+    eager: true,
+});
+
+const works = crochetData.map((w) => {
+    const mod = images[`../../assets/crochet/${w.file}.webp`];
+    if (!mod) throw new Error(`crochet.json 指到不存在的圖檔：${w.file}`);
+    return { ...w, img: mod.default };
+});
+---
+
+<Base title="鉤針｜曾芸儀" description="曾芸儀的鉤針作品紀錄。">
+    <h1 class="page-title">鉤針</h1>
+    <p class="wip-note">內容整理中——目前為佔位示意圖，之後會換上作品照片。</p>
+
+    <div class="work-grid">
+        {works.map((w) => (
+            <figure class="work-item">
+                <Image src={w.img} alt={w.title} widths={[480, 800]} sizes="(max-width: 640px) 100vw, 340px" loading="lazy" />
+                <figcaption>
+                    <strong>{w.title}</strong>
+                    <span>{w.desc}</span>
+                </figcaption>
+            </figure>
+        ))}
+    </div>
+</Base>
+
+<style>
+    .page-title {
+        margin: 4rem 0 0;
+        font-size: 1.6rem;
+    }
+
+    .work-grid {
+        margin-top: 2.5rem;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem 1rem;
+    }
+
+    @media (max-width: 640px) {
+        .work-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .work-item {
+        margin: 0;
+    }
+
+    .work-item img {
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        width: 100%;
+        aspect-ratio: 1;
+        object-fit: cover;
+    }
+
+    .work-item figcaption {
+        margin-top: 0.6rem;
+    }
+
+    .work-item strong {
+        display: block;
+        font-size: 0.95rem;
+        font-weight: 600;
+    }
+
+    .work-item span {
+        display: block;
+        margin-top: 0.2rem;
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        line-height: 1.6;
+    }
+</style>
