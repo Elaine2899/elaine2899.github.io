@@ -1,0 +1,94 @@
+---
+import Base from '../layouts/Base.astro';
+
+const entries = [
+    {
+        href: 'https://elaine2899.github.io/portfolio/',
+        title: '作品集',
+        desc: '求職用的專案與經歷整理：FunCtrl、PrepAgent 與其他作品。',
+        external: true,
+    },
+];
+---
+
+<Base title="曾芸儀" description="曾芸儀的個人網站：工程、影像、手作與學習紀錄。">
+    <section class="hero">
+        <h1>曾芸儀</h1>
+        <p class="tagline">工程、影像、手作與學習紀錄。</p>
+        <p class="intro">資訊管理背景，寫程式也拍照片。這裡是作品集以外的地方——之後會慢慢放上攝影、鉤針，還有讀書與觀影的筆記。</p>
+    </section>
+
+    <section class="entries" aria-label="內容入口">
+        {entries.map((entry) => (
+            <a
+                class="entry-card"
+                href={entry.href}
+                target={entry.external ? '_blank' : undefined}
+                rel={entry.external ? 'noopener noreferrer' : undefined}
+            >
+                <h2>{entry.title}</h2>
+                <p>{entry.desc}</p>
+            </a>
+        ))}
+    </section>
+</Base>
+
+<style>
+    .hero {
+        padding-top: 5rem;
+    }
+
+    .hero h1 {
+        margin: 0;
+        font-size: 2rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+    }
+
+    .tagline {
+        margin: 0.75rem 0 0;
+        color: var(--accent-gold);
+        font-size: 1.05rem;
+    }
+
+    .intro {
+        margin: 2rem 0 0;
+        color: var(--text-secondary);
+        max-width: 36rem;
+    }
+
+    .entries {
+        margin-top: 4rem;
+        display: grid;
+        gap: 1rem;
+    }
+
+    .entry-card {
+        display: block;
+        padding: 1.5rem;
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        color: inherit;
+        transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .entry-card:hover {
+        background: var(--bg-card-hover);
+        border-color: var(--border-hover);
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .entry-card h2 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    .entry-card p {
+        margin: 0.5rem 0 0;
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+    }
+</style>

@@ -1,0 +1,102 @@
+---
+import '../styles/global.css';
+
+interface Props {
+    title: string;
+    description: string;
+}
+
+const { title, description } = Astro.props;
+
+const nav = [
+    { href: '/', label: '首頁' },
+    { href: 'https://elaine2899.github.io/portfolio/', label: '作品集', external: true },
+];
+---
+
+<html lang="zh-Hant">
+    <head>
+        <meta charset="utf-8" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="icon" href="/favicon.ico" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="generator" content={Astro.generator} />
+        <meta name="description" content={description} />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700&display=swap"
+            rel="stylesheet"
+        />
+        <title>{title}</title>
+    </head>
+    <body>
+        <header class="site-header">
+            <nav aria-label="主導覽">
+                {nav.map((item) => (
+                    <a
+                        href={item.href}
+                        aria-current={!item.external && Astro.url.pathname === item.href ? 'page' : undefined}
+                        target={item.external ? '_blank' : undefined}
+                        rel={item.external ? 'noopener noreferrer' : undefined}
+                    >
+                        {item.label}
+                    </a>
+                ))}
+            </nav>
+        </header>
+
+        <main class="site-main">
+            <slot />
+        </main>
+
+        <footer class="site-footer">
+            <p>
+                © {new Date().getFullYear()} 曾芸儀 ·
+                <a href="https://github.com/Elaine2899" target="_blank" rel="noopener noreferrer">GitHub</a> ·
+                <a href="mailto:elaine.zheng.yyi@gmail.com">Email</a>
+            </p>
+        </footer>
+    </body>
+</html>
+
+<style>
+    .site-header {
+        max-width: var(--max-width);
+        margin: 0 auto;
+        padding: 2rem 1.5rem 0;
+    }
+
+    .site-header nav {
+        display: flex;
+        gap: 1.5rem;
+    }
+
+    .site-header a {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+    }
+
+    .site-header a:hover {
+        color: var(--text-primary);
+        text-decoration: none;
+    }
+
+    .site-header a[aria-current='page'] {
+        color: var(--text-primary);
+    }
+
+    .site-main {
+        max-width: var(--max-width);
+        margin: 0 auto;
+        padding: 0 1.5rem;
+    }
+
+    .site-footer {
+        max-width: var(--max-width);
+        margin: 0 auto;
+        padding: 3rem 1.5rem 2.5rem;
+        color: var(--text-muted);
+        font-size: 0.85rem;
+    }
+</style>

@@ -1,0 +1,66 @@
+/* 與作品集同族的設計變數（石墨黑 + 霧金），主站取更安靜的用法 */
+:root {
+    --bg-dark:        #0e0f13;
+    --bg-card:        #16171d;
+    --bg-card-hover:  #1b1d25;
+
+    --border-color:   #262832;
+    --border-hover:   #3d4150;
+
+    --text-primary:   #e8e9ed;
+    --text-secondary: #9a9ca8;
+    --text-muted:     #686b76;
+
+    --accent-gold:    #c9a86a;
+    --accent-amber:   #d9b87c;
+
+    --font-primary: 'Inter', 'Noto Sans TC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+    --max-width: 44rem;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html {
+    color-scheme: dark;
+}
+
+body {
+    margin: 0;
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    font-family: var(--font-primary);
+    font-size: 1rem;
+    line-height: 1.8;
+    -webkit-font-smoothing: antialiased;
+}
+
+a {
+    color: var(--accent-gold);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--accent-amber);
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+::selection {
+    background: rgba(201, 168, 106, 0.25);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
