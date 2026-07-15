@@ -58,6 +58,15 @@ img {
     background: rgba(201, 168, 106, 0.25);
 }
 
+/* 佔位／整理中提示，內容定稿後移除 */
+.wip-note {
+    margin: 1rem 0 0;
+    color: var(--text-muted);
+    font-size: 0.88rem;
+    border-left: 2px solid var(--accent-gold);
+    padding-left: 0.75rem;
+}
+
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
         animation-duration: 0.01ms !important;

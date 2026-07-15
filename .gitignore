@@ -22,3 +22,10 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# 私人筆記，不公開
+CLAUDE.md
+AGENTS.md
+docs/
+todo.md
+scratch/

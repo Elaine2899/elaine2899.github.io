@@ -10,8 +10,13 @@ const { title, description } = Astro.props;
 
 const nav = [
     { href: '/', label: '首頁' },
+    { href: '/photos/', label: '攝影' },
+    { href: '/notes/', label: '筆記' },
     { href: 'https://elaine2899.github.io/portfolio/', label: '作品集', external: true },
 ];
+
+const isCurrent = (href: string) =>
+    href === '/' ? Astro.url.pathname === '/' : Astro.url.pathname.startsWith(href);
 ---
 
 <html lang="zh-Hant">
@@ -36,7 +41,7 @@ const nav = [
                 {nav.map((item) => (
                     <a
                         href={item.href}
-                        aria-current={!item.external && Astro.url.pathname === item.href ? 'page' : undefined}
+                        aria-current={!item.external && isCurrent(item.href) ? 'page' : undefined}
                         target={item.external ? '_blank' : undefined}
                         rel={item.external ? 'noopener noreferrer' : undefined}
                     >
