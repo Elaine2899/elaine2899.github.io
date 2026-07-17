@@ -19,8 +19,8 @@
 </div>
 <div id="content" hidden></div>
 <script>
-var PAYLOAD = '19mWzIVT7xn/Dh4zj1SNXT8KSJum0FGZ2hF4Ssw1VDQSwO+PoKYUP5LXH/P00CQ1U9Zk2g2ewzrjxivVDHEfplw+mJQQMsRIQG3clsU56UfTAFTVr3q4R2WEvxDqQ4O5ijBMe7q6tXV+XFjfWH3ZNHJ0RXew9JLtsqcICoWjAiyqa9seyDvxiUaYSrAeygjlIkCXHqCMce2oj2qHsUM5bldV3zaF+hij+CeosFNn+FwBw9cGXHoN8EpG8gBRJLPXraZsMUl+pvarDAkibFhixKi7ZhxYPyNGvylEOn2kW+Fc5K+MyINzxvaBDzJ9Wn/c7UqXX5mh29HSIYrGZcvYbTfhGoliM4uDlL9kelHfDsHFu02qyemIJ/mTFVM5vf8jTM6Gb7pjQImznll402bC5DYTkbYqRYQCv8a8cEc0VPKLzHuEhypxUy2c3xyeEMDCwJsZowznZ3eA6BGG9PxTRXCUeMtf4jtKQUSrHO56jCA2Jw==';
-var ITERATIONS = 600000;
+var PAYLOAD = '__PAYLOAD__';
+var ITERATIONS = __ITERATIONS__;
 async function decrypt(password) {
   var raw = Uint8Array.from(atob(PAYLOAD), function (c) { return c.charCodeAt(0); });
   var salt = raw.slice(0, 16), iv = raw.slice(16, 28), data = raw.slice(28);

@@ -1,0 +1,176 @@
+/* 私人頁樣式：上半是密碼閘門，下半是解密後內容的 typography。
+   改這個檔案不需要重新加密——樣式與密文是分開的。 */
+
+:root {
+    color-scheme: dark;
+    --bg-dark: #0e0f13;
+    --bg-card: #16171d;
+    --border-color: #262832;
+    --text-primary: #e8e9ed;
+    --text-secondary: #9a9ca8;
+    --text-muted: #686b76;
+    --accent-gold: #c9a86a;
+    --error: #e5534b;
+}
+
+body {
+    margin: 0;
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    font-family: 'Inter', 'Noto Sans TC', -apple-system, sans-serif;
+    line-height: 1.8;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ---- 密碼閘門 ---- */
+
+#gate {
+    display: flex;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+
+#gate form {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 20rem;
+}
+
+#gate h1 {
+    margin: 0 0 1.25rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+#gate input {
+    width: 100%;
+    box-sizing: border-box;
+    background: var(--bg-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    padding: 0.6rem 0.75rem;
+    font-size: 1rem;
+}
+
+#gate input:focus {
+    outline: none;
+    border-color: var(--accent-gold);
+}
+
+#gate button {
+    margin-top: 1rem;
+    width: 100%;
+    background: var(--accent-gold);
+    color: var(--bg-dark);
+    border: none;
+    border-radius: 8px;
+    padding: 0.6rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#gate button:disabled {
+    opacity: 0.5;
+    cursor: wait;
+}
+
+#err {
+    color: var(--error);
+    font-size: 0.85rem;
+    min-height: 1.5em;
+    margin: 0.75rem 0 0;
+}
+
+/* ---- 解密後的內容 ---- */
+
+#content {
+    max-width: 44rem;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 4rem;
+}
+
+#content h1 {
+    margin: 0 0 1.5rem;
+    font-size: 1.6rem;
+    line-height: 1.4;
+}
+
+#content h2 {
+    margin: 2.5rem 0 0.75rem;
+    font-size: 1.2rem;
+}
+
+#content p {
+    margin: 1rem 0;
+    color: var(--text-secondary);
+}
+
+#content li {
+    color: var(--text-secondary);
+}
+
+#content a {
+    color: var(--accent-gold);
+    text-decoration: none;
+}
+
+#content a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+}
+
+#content blockquote {
+    margin: 1.5rem 0;
+    padding: 0.25rem 0 0.25rem 1.25rem;
+    border-left: 2px solid var(--accent-gold);
+    color: var(--text-primary);
+}
+
+#content blockquote p {
+    color: var(--text-primary);
+}
+
+#content code {
+    font-size: 0.88em;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 0.1em 0.35em;
+}
+
+#content pre {
+    margin: 1.5rem 0;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 0.88rem;
+    line-height: 1.7;
+    background: var(--bg-card);
+}
+
+#content pre code {
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+#content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+#content hr {
+    margin: 2.5rem 0;
+    border: none;
+    border-top: 1px solid var(--border-color);
+}
