@@ -1,0 +1,123 @@
+#!/usr/bin/env node
+// 私人頁加密腳本
+// 用法：node scripts/encrypt-private.mjs
+//   讀取 private-src/index.html（gitignored，明文絕不進 repo），
+//   互動式詢問密碼，輸出加密後的 public/private/index.html（只有密文，可安心 commit）。
+//   也可用環境變數 PRIVATE_PAGE_PASSWORD 提供密碼（別用命令列參數，會留在 shell 歷史）。
+// 參數：AES-256-GCM，金鑰由 PBKDF2-SHA256（600,000 次迭代）+ 隨機 salt 導出。
+// 注意：密文公開在網路上，可被離線暴力破解——密碼請用長句（12 字元以上）。
+
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import readline from 'node:readline/promises';
+
+const ITERATIONS = 600000;
+
+const TEMPLATE = `<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<title>私人頁面</title>
+<style>
+:root { color-scheme: dark; }
+body { margin: 0; background: #0e0f13; color: #e8e9ed; font-family: 'Inter', 'Noto Sans TC', -apple-system, sans-serif; line-height: 1.8; }
+.wrap { max-width: 44rem; margin: 0 auto; padding: 0 1.5rem; }
+#gate { display: flex; min-height: 100vh; align-items: center; justify-content: center; }
+#gate form { background: #16171d; border: 1px solid #262832; border-radius: 12px; padding: 2rem; width: 100%; max-width: 20rem; }
+#gate h1 { margin: 0 0 1.25rem; font-size: 1.1rem; font-weight: 600; }
+#gate input { width: 100%; box-sizing: border-box; background: #0e0f13; border: 1px solid #262832; border-radius: 8px; color: #e8e9ed; padding: 0.6rem 0.75rem; font-size: 1rem; }
+#gate input:focus { outline: none; border-color: #c9a86a; }
+#gate button { margin-top: 1rem; width: 100%; background: #c9a86a; color: #0e0f13; border: none; border-radius: 8px; padding: 0.6rem; font-size: 0.95rem; font-weight: 600; cursor: pointer; }
+#gate button:disabled { opacity: 0.5; cursor: wait; }
+#err { color: #e5534b; font-size: 0.85rem; min-height: 1.5em; margin: 0.75rem 0 0; }
+#content { padding: 3rem 0 4rem; }
+#content a { color: #c9a86a; }
+</style>
+</head>
+<body>
+<div id="gate">
+  <form id="f">
+    <h1>私人頁面</h1>
+    <input id="pw" type="password" autocomplete="current-password" placeholder="密碼" autofocus>
+    <button id="btn" type="submit">解鎖</button>
+    <p id="err"></p>
+  </form>
+</div>
+<div class="wrap" id="content" hidden></div>
+<script>
+var PAYLOAD = '__PAYLOAD__';
+var ITERATIONS = __ITERATIONS__;
+async function decrypt(password) {
+  var raw = Uint8Array.from(atob(PAYLOAD), function (c) { return c.charCodeAt(0); });
+  var salt = raw.slice(0, 16), iv = raw.slice(16, 28), data = raw.slice(28);
+  var enc = new TextEncoder();
+  var km = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
+  var key = await crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt: salt, iterations: ITERATIONS, hash: 'SHA-256' },
+    km, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+  var plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: iv }, key, data);
+  return new TextDecoder().decode(plain);
+}
+document.getElementById('f').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  var btn = document.getElementById('btn');
+  var err = document.getElementById('err');
+  btn.disabled = true;
+  err.textContent = '';
+  try {
+    var html = await decrypt(document.getElementById('pw').value);
+    document.getElementById('gate').remove();
+    var content = document.getElementById('content');
+    content.innerHTML = html;
+    content.hidden = false;
+  } catch (_) {
+    err.textContent = '密碼不對，再試一次。';
+    btn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
+`;
+
+async function main() {
+    const src = readFileSync('private-src/index.html', 'utf8');
+
+    let password = process.env.PRIVATE_PAGE_PASSWORD;
+    if (!password) {
+        const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+        password = await rl.question('加密密碼（建議 12 字元以上的長句）：');
+        rl.close();
+    }
+    if (!password) throw new Error('沒有密碼');
+    if (password.length < 12) {
+        console.warn('⚠ 密碼少於 12 字元——密文是公開的，短密碼可被離線暴力破解');
+    }
+
+    const enc = new TextEncoder();
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const km = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
+    const key = await crypto.subtle.deriveKey(
+        { name: 'PBKDF2', salt, iterations: ITERATIONS, hash: 'SHA-256' },
+        km,
+        { name: 'AES-GCM', length: 256 },
+        false,
+        ['encrypt']
+    );
+    const cipher = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(src)));
+
+    const payload = Buffer.concat([Buffer.from(salt), Buffer.from(iv), Buffer.from(cipher)]).toString('base64');
+    const html = TEMPLATE.replace('__PAYLOAD__', payload).replace('__ITERATIONS__', String(ITERATIONS));
+
+    mkdirSync('public/private', { recursive: true });
+    writeFileSync('public/private/index.html', html);
+    console.log(`已輸出 public/private/index.html（密文 ${payload.length} 字元）`);
+}
+
+main().catch((e) => {
+    console.error(e.message);
+    process.exit(1);
+});
